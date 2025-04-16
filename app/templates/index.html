@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Dự đoán Calories đốt</title>
+    <style>
+        body { font-family: Arial; margin: 20px; }
+        form div { margin-bottom: 10px; }
+        label { display: block; margin-bottom: 5px; }
+        input[type="number"] { width: 200px; padding: 5px; }
+        select, input[type="submit"] { padding: 5px; }
+    </style>
+</head>
+<body>
+    <h1>Dự đoán Calories đốt khi tập luyện</h1>
+    <form method="POST">
+        {% for ten in feature_names %}
+            <div>
+                <label>{{ ten.replace('_', ' ').capitalize() }}</label>
+                <input type="number" step="any" name="{{ ten }}" required>
+            </div>
+        {% endfor %}
+        <div>
+            <label>Chọn mô hình:</label>
+            <select name="model">
+                <option value="ridge">Ridge Regression</option>
+                <option value="rf">Random Forest Regression</option>
+            </select>
+        </div>
+        <input type="submit" value="Dự đoán">
+    </form>
+
+    {% if ket_qua is not none %}
+        {% if ket_qua is string %}
+        <h2 style="color: red;">{{ ket_qua }}</h2>
+        {% else %}
+            <h2>Kết quả dự đoán: {{ ket_qua | round(2) }} calories</h2>
+        {% endif %}
+    {% endif %}
+</body>
+</html>
