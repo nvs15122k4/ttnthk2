@@ -1,4 +1,4 @@
-v11v11
+v2.11
 # Gym Calories Prediction AI Project
 RR Gym Members Exercise Dataset 
 ## 📌 Mục tiêu
