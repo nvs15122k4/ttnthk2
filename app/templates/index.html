@@ -3,39 +3,109 @@
 <head>
     <meta charset="UTF-8">
     <title>Dự đoán Calories đốt</title>
-    <style>
-        body { font-family: Arial; margin: 20px; }
-        form div { margin-bottom: 10px; }
-        label { display: block; margin-bottom: 5px; }
-        input[type="number"] { width: 200px; padding: 5px; }
-        select, input[type="submit"] { padding: 5px; }
-    </style>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
-    <h1>Dự đoán Calories đốt khi tập luyện</h1>
-    <form method="POST">
-        {% for ten in feature_names %}
-            <div>
-                <label>{{ ten.replace('_', ' ').capitalize() }}</label>
-                <input type="number" step="any" name="{{ ten }}" required>
-            </div>
-        {% endfor %}
-        <div>
-            <label>Chọn mô hình:</label>
-            <select name="model">
-                <option value="ridge">Ridge Regression</option>
-                <option value="rf">Random Forest Regression</option>
-            </select>
-        </div>
-        <input type="submit" value="Dự đoán">
-    </form>
+    <div class="container py-5">
+        <h1 class="text-center mb-4">🔥 Dự đoán Lượng Calories Đốt Khi Tập Luyện</h1>
+        <form method="POST" class="row g-3">
+            {% for ten in feature_names %}
+                {% if ten == 'age' %}
+                    <!-- Tuổi -->
+                    <div class="col-md-6">
+                        <label for="age" class="form-label">Tuổi</label>
+                        <input type="number" class="form-control" step="any" name="age" id="age" required>
+                    </div>
 
-    {% if ket_qua is not none %}
-        {% if ket_qua is string %}
-        <h2 style="color: red;">{{ ket_qua }}</h2>
-        {% else %}
-            <h2>Kết quả dự đoán: {{ ket_qua | round(2) }} calories</h2>
+                    <!-- Giới tính -->
+                    <div class="col-md-6">
+                        <label class="form-label d-block">Giới tính</label>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="gender" id="gender-male" value="0" required>
+                            <label class="form-check-label" for="gender-male">Nam</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="gender" id="gender-female" value="1" required>
+                            <label class="form-check-label" for="gender-female">Nữ</label>
+                        </div>
+                    </div>
+
+                    <!-- Thay đổi phần workout_type -->
+                    {% if ten == 'workout_type' %}
+                    <!-- Loại hình tập luyện -->
+                    <div class="col-md-6">
+                        <label for="workout_type" class="form-label">Loại hình tập luyện</label>
+                        <select name="workout_type" id="workout_type" class="form-select" required>
+                            <option value="hiit">HIIT</option>
+                            <option value="strength">Strength</option>
+                            <option value="yoga">Yoga</option>
+                        </select>
+                    </div>
+                    {% endif %}
+
+                    <!-- Thay đổi phần experience_level -->
+                    {% if ten == 'experience_level' %}
+                    <!-- Mức độ kinh nghiệm -->
+                    <div class="col-md-6">
+                        <label for="experience_level" class="form-label">Mức độ kinh nghiệm</label>
+                        <select name="experience_level" id="experience_level" class="form-select" required>
+                            <option value="2">Level 2 - Trung bình</option>
+                            <option value="3">Level 3 - Nâng cao</option>
+                        </select>
+                    </div>
+                    {% endif %}
+                        
+                {% elif ten != 'gender' %}
+                    <!-- Các trường số -->
+                    <div class="col-md-6">
+                        <label for="{{ ten }}" class="form-label">
+                            {% if ten == 'weight__kg' %}Cân nặng (kg)
+                            {% elif ten == 'height__m' %}Chiều cao (m)
+                            {% elif ten == 'max_bpm' %}Nhịp tim tối đa
+                            {% elif ten == 'avg_bpm' %}Nhịp tim trung bình
+                            {% elif ten == 'resting_bpm' %}Nhịp tim nghỉ
+                            {% elif ten == 'session_duration__hours' %}Thời gian tập (giờ)
+                            {% elif ten == 'fat_percentage' %}Tỷ lệ mỡ (%)
+                            {% elif ten == 'water_intake__liters' %}Lượng nước uống (lít)
+                            {% elif ten == 'workout_frequency__days/week' %}Tần suất tập (ngày/tuần)
+                            {% elif ten == 'bmi' %}Chỉ số BMI
+                            {% else %}{{ ten.replace('_', ' ').capitalize() }}
+                            {% endif %}
+                        </label>
+                        <input type="number" step="any" name="{{ ten }}" id="{{ ten }}" class="form-control" required>
+                    </div>
+                {% endif %}
+            {% endfor %}
+
+            <!-- Chọn mô hình -->
+            <div class="col-md-6">
+                <label for="model" class="form-label">Chọn mô hình</label>
+                <select name="model" id="model" class="form-select">
+                    <option value="ridge">Ridge Regression</option>
+                    <option value="rf">Random Forest Regression</option>
+                </select>
+            </div>
+
+            <!-- Nút submit -->
+            <div class="col-12 text-center mt-3">
+                <button type="submit" class="btn btn-primary btn-lg">🎯 Dự đoán</button>
+            </div>
+        </form>
+
+        {% if ket_qua is not none %}
+            <div class="mt-5 text-center">
+                {% if ket_qua is string %}
+                    <h2 class="text-danger">{{ ket_qua }}</h2>
+                {% else %}
+                    <h2 class="text-success">💪 Kết quả dự đoán: {{ ket_qua | round(2) }} calories</h2>
+                {% endif %}
+            </div>
         {% endif %}
-    {% endif %}
+    </div>
+
+    <!-- Bootstrap 5 JS Bundle -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

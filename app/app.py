@@ -33,7 +33,7 @@ def index():
                 dau_vao_imputed = pd.DataFrame(
                     imputer.transform(dau_vao_scaled), columns=feature_names
                 )
-                ket_qua = float(model_ridge.predict(dau_vao_imputed)[0])
+                ket_qua = max(0.0, float(model_ridge.predict(dau_vao_imputed)[0]))
             else:
                 # Random Forest không cần scaler hay imputer
                 ket_qua = float(model_rf.predict(dau_vao_df)[0])
